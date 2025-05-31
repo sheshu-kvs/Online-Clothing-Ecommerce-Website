@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Order Management</title>
+  <link rel="stylesheet" href="/css/admin-dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1><i class="fas fa-clipboard-list" style="margin-right: 10px;"></i> Order Management</h1>
+      <a th:href="@{/admin/dashboard}" class="btn btn-primary">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </a>
+    </div>
+
+    <div class="card table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Products</th>
+            <th>Address</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="order : ${orders}" th:classappend="${#lists.isEmpty(orders)} ? 'empty-state'">
+            <td th:text="${order.orderid}">ORD-1001</td>
+            <td th:text="${order.user?.username} ?: 'Guest'">john_doe</td>
+            <td>
+              <ul class="product-list">
+                <li th:each="item : ${order.orderItems}"
+                    th:text="${item.product.name + ' × ' + item.quantity}">
+                  Premium Headphones × 2
+                </li>
+              </ul>
+            </td>
+            <td th:text="${order.user?.address}">123 Main St, City</td>
+            <td>
+              <span th:text="${order.status}" 
+                    th:classappend="'status-' + ${order.status.name().toLowerCase()}">
+                Processing
+              </span>
+            </td>
+            <td>
+              <form method="post" th:action="@{/admin/orders/update}" class="form-inline">
+                <input type="hidden" name="orderId" th:value="${order.orderid}" />
+                <select name="status">
+                  <option th:selected="${order.status.name() == 'PENDING'}" th:value="PENDING">Pending</option>
+                  <option th:selected="${order.status.name() == 'PROCESSING'}" th:value="PROCESSING">Processing</option>
+                  <option th:selected="${order.status.name() == 'SHIPPED'}" th:value="SHIPPED">Shipped</option>
+                  <option th:selected="${order.status.name() == 'DELIVERED'}" th:value="DELIVERED">Delivered</option>
+                  <option th:selected="${order.status.name() == 'CANCELLED'}" th:value="CANCELLED">Cancelled</option>
+                </select>
+                <button type="submit" class="btn btn-primary" style="padding: 0.65rem 1rem;">
+                  <i class="fas fa-save"></i> Update
+                </button>
+              </form>
+            </td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(orders)}">
+            <td colspan="6" class="empty-state">
+              <i class="fas fa-box-open" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+              <h3>No Orders Found</h3>
+              <p>There are currently no orders to display.</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

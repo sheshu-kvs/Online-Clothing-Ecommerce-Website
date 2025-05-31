@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Your Shopping Cart | ShopName</title>
+	<link rel="stylesheet" href="/css/styles.css">
+	<link rel="stylesheet" href="/css/products.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">ShopName</div>
+            <div class="nav-links">
+                <a th:href="@{/}"><i class="fas fa-home"></i> Home</a>
+                <a th:href="@{/products}"><i class="fas fa-box-open"></i> Products</a>
+                <a th:href="@{/cart}" class="active"><i class="fas fa-shopping-cart"></i> Cart</a>
+                <a th:href="@{/login}"><i class="fas fa-user"></i> Login</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="cart-container">
+        <h1>Your Shopping Cart</h1>
+
+        <div class="empty-cart" th:if="${cartItems == null || cartItems.empty}">
+            <div class="empty-cart-content">
+                <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                </svg>
+                <h2>Your cart is empty</h2>
+                <p>Looks like you haven't added any items yet</p>
+                <a th:href="@{/products}" class="btn btn-primary">
+                    <i class="fas fa-arrow-left"></i> Continue Shopping
+                </a>
+            </div>
+        </div>
+
+        <div class="cart-with-items" th:unless="${cartItems == null || cartItems.empty}">
+            <div class="cart-items">
+                <table class="cart-table">
+                    <thead>
+                        <tr>
+                            <th class="product-col">Product</th>
+                            <th class="price-col">Price</th>
+                            <th class="quantity-col">Quantity</th>
+                            <th class="subtotal-col">Subtotal</th>
+                            <th class="action-col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${cartItems}">
+                            <td class="product-info">
+                                <img th:src="@{'/images/' + ${item.imageUrl}}" 
+                                     onerror="this.src='/images/placeholder.jpg'"
+                                     class="product-image">
+                                <div class="product-details">
+                                    <h3 th:text="${item.name}">Product Name</h3>
+                                </div>
+                            </td>
+                            <td class="price" th:text="'₹' + ${#numbers.formatDecimal(item.price, 1, 2)}">₹0.00</td>
+                            <td class="quantity">
+                                <form th:action="@{/cart/update}" method="post" class="update-form">
+                                    <input type="hidden" name="productId" th:value="${item.productId}">
+                                    <div class="quantity-control">
+                                        <button type="button" class="quantity-btn minus" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">−</button>
+                                        <input type="number" name="quantity" 
+                                               th:value="${item.quantity}" min="1" max="10"
+                                               class="quantity-input">
+                                        <button type="button" class="quantity-btn plus" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">+</button>
+                                    </div>
+                                    <button type="submit" class="btn-update">Update</button>
+                                </form>
+                            </td>
+                            <td class="subtotal" th:text="'₹' + ${#numbers.formatDecimal(item.price * item.quantity, 1, 2)}">₹0.00</td>
+                            <td class="action">
+                                <form th:action="@{/cart/remove}" method="post" class="remove-form">
+                                    <input type="hidden" name="productId" th:value="${item.productId}">
+                                    <button type="submit" class="btn-remove" title="Remove item">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="cart-summary">
+                <div class="summary-card">
+                    <h3>Order Summary</h3>
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span th:text="'₹' + ${#numbers.formatDecimal(cartTotal, 1, 2)}">₹0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span>Free</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total</span>
+                        <span th:text="'₹' + ${#numbers.formatDecimal(cartTotal, 1, 2)}">₹0.00</span>
+                    </div>
+                    <a th:href="@{/checkout}" class="btn btn-primary btn-checkout">
+                        <i class="fas fa-credit-card"></i> Proceed to Checkout
+                    </a>
+                    <a th:href="@{/products}" class="continue-shopping">
+                        <i class="fas fa-arrow-left"></i> Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2023 ShopName. All rights reserved.</p>
+            <div class="social-links" style="margin-top: 1rem;">
+                <a href="#" style="color: white; margin: 0 10px;"><i class="fab fa-facebook"></i></a>
+                <a href="#" style="color: white; margin: 0 10px;"><i class="fab fa-twitter"></i></a>
+                <a href="#" style="color: white; margin: 0 10px;"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

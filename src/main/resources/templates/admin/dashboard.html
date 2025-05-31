@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+	<link rel="stylesheet" href="/css/admin-dashboard.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-tachometer-alt" style="margin-right: 10px;"></i>Admin Dashboard</h1>
+                <div class="welcome-message">Welcome back, Admin! <span th:text="'Today is ' + ${#temporals.format(#temporals.createToday(), 'EEEE, MMMM d')}"></span></div>
+            </div>
+            
+            <div class="header-actions">
+                <a href="/admin/products" class="btn btn-outline">
+                    <i class="fas fa-box-open"></i> Products
+                </a>
+                <a href="/admin/orders" class="btn btn-outline">
+                    <i class="fas fa-shopping-cart"></i> Orders
+                </a>
+                <a href="/admin/users" class="btn btn-outline">
+                    <i class="fas fa-users"></i> Users
+                </a>
+                <a href="/login" class="btn btn-primary">
+                    <i class="fas fa-sign-out-alt"></i> Login
+                </a>
+            </div>
+        </div>
+        
+        <div class="cards">
+            <div class="card">
+                <h3>Total Products</h3>
+                <div class="value" th:text="${stats.totalProducts}">0</div>
+                <div class="description">In stock</div>
+            </div>
+            
+            <div class="card">
+                <h3>Total Orders</h3>
+                <div class="value" th:text="${stats.totalOrders}">0</div>
+                <div class="description">This month</div>
+            </div>
+            
+            <div class="card card-revenue">
+                <h3>Revenue</h3>
+                <div class="value" th:text="${#numbers.formatCurrency(stats.revenue)}">$0</div>
+                <div class="description">Current month</div>
+            </div>
+            
+            <div class="card">
+                <h3>Customers</h3>
+                <div class="value" th:text="${stats.totalCustomers}">0</div>
+                <div class="description">Registered users</div>
+            </div>
+        </div>
+        
+        <h2 class="section-title">
+            <i class="fas fa-bolt"></i>Quick Actions
+        </h2>
+        
+        <div class="quick-links">
+            <a href="/admin/products" class="quick-link">
+                <i class="fas fa-box-open"></i>
+                <span class="link-text">Manage Products</span>
+            </a>
+            
+            <a href="/admin/orders" class="quick-link">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="link-text">View Orders</span>
+            </a>
+            
+            <a href="/admin/users" class="quick-link">
+                <i class="fas fa-users"></i>
+                <span class="link-text">Manage Users</span>
+            </a>
+            
+            <a href="/admin/products/add" class="quick-link">
+                <i class="fas fa-plus-circle"></i>
+                <span class="link-text">Add Product</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

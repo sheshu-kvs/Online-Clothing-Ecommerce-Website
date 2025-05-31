@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Product Form</title>
+	<link rel="stylesheet" href="/css/admin-dashboard.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="product-form-container">
+        <h2 th:text="${product.productid != null} ? 'Edit Product' : 'Add Product'">Product Form</h2>
+        
+        <!-- Message Display -->
+        <div th:if="${success}" class="alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i>
+            <span th:text="${error}"></span>
+        </div>
+        
+        <form th:action="${product.productid != null} ? 
+                      @{/admin/products/edit/{id}(id=${product.productid})} : 
+                      @{/admin/products/add}"
+              method="post"
+              enctype="multipart/form-data">
+            
+            <input type="hidden" th:if="${product.productid != null}" 
+                   name="productid" th:value="${product.productid}">
+				   
+
+            <div class="form-group">
+                <label for="name">Product Name</label>
+                <input type="text" id="name" name="name" th:value="${product.name}" 
+                       class="form-control" placeholder="Enter product name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="price">Price</label>
+                <input type="number" id="price" step="0.01" name="price" 
+                       th:value="${product.price != null} ? ${product.price} : ''" class="form-control" 
+                       placeholder="0.00" min="0" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="stock_quantity">Stock Quantity</label>
+                <input type="number" id="stock_quantity" name="stock_quantity" 
+                       th:value="${product.stock_quantity != null} ? ${product.stock_quantity} : ''" class="form-control" 
+                       placeholder="Enter stock quantity" min="0" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select id="category" name="category" class="form-control" required>
+                    <option value="">-- Select Category --</option>
+                    <option th:each="cat : ${T(com.sheshu.model.ProductCategory).values()}"
+                            th:value="${cat}"
+                            th:selected="${product.category != null && product.category == cat}"
+                            th:text="${cat.displayName}">
+                    </option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" class="form-control" 
+                          placeholder="Enter product description" 
+                          th:text="${product.description != null} ? ${product.description} : ''"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Product Image</label>
+                <div class="file-input-wrapper">
+                    <div class="file-input-button">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span th:text="${product.imageurl != null} ? 'Change Image' : 'Choose Image'"></span>
+                    </div>
+                    <input type="file" name="imageFile" class="form-control">
+                </div>
+                <div class="image-preview" th:if="${product.imageurl != null and product.imageurl != ''}">
+                    <img th:src="@{'/images/' + ${product.imageurl}}" 
+                         alt="Current product image">
+                    <p class="text-muted">Current image</p>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas" th:classappend="${product.productid != null} ? 'fa-sync-alt' : 'fa-save'"></i>
+                    <span th:text="${product.productid != null} ? 'Update Product' : 'Save Product'"></span>
+                </button>
+                <a th:href="@{/admin/products}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

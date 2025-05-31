@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>User Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+	<link rel="stylesheet" href="/css/admin-dashboard.css">
+
+	</head>
+<body>
+    <div sec:authorize="hasRole('ADMIN')">
+        <main class="admin-main">
+            <div class="page-header">
+                <h1><i class="fas fa-users-cog" style="margin-right: 10px;"></i> User Management</h1>
+                <a th:href="@{/admin/dashboard}" class="btn btn-primary">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+
+            <div class="card table-responsive">
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="user : ${users}">
+                            <td th:text="${user.userid}">1</td>
+                            <td th:text="${user.username}">john_doe</td>
+                            <td th:text="${user.email}">john@example.com</td>
+                            <td>
+                                <form class="role-form" th:action="@{/admin/users/{id}/role(id=${user.userid})}" method="post">
+                                    <select name="role" onchange="this.form.submit()">
+                                        <option value="USER" 
+                                                th:selected="${#strings.equals(user.roles, 'USER')}">User</option>
+                                        <option value="ADMIN" 
+                                                th:selected="${#strings.contains(user.roles, 'ADMIN')}">Admin</option>
+                                    </select>
+                                    <button type="submit" class="btn-icon btn-update" title="Update Role">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                </form>
+                            </td>
+                            <td>
+                                <div class="actions-cell">
+                                    <form th:action="@{/admin/users/{id}/delete(id=${user.userid})}" method="post">
+                                        <button type="submit" class="btn-icon btn-danger" 
+                                                onclick="return confirm('Are you sure you want to delete this user?')"
+                                                title="Delete User">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(users)}">
+                            <td colspan="5" class="empty-state">
+                                <i class="fas fa-user-slash"></i>
+                                <h3>No Users Found</h3>
+                                <p>There are currently no users to display.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Enhanced confirmation dialog for role change
+        document.querySelectorAll('select[name="role"]').forEach(select => {
+            select.addEventListener('change', function(e) {
+                const newRole = this.value;
+                const username = this.closest('tr').querySelector('td:nth-child(2)').textContent;
+                
+                if(!confirm(`Change ${username}'s role to ${newRole}?`)) {
+                    e.preventDefault();
+                    this.form.reset();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Order Confirmation</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="/css/products.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+   
+</head>
+<body>
+    <div class="container">
+        <div class="thank-you">
+            <div class="thank-you-icon">✓</div>
+            <h1>Thank you for your order!</h1>
+            <p>Your order has been received and is being processed.</p>
+        </div>
+
+        <div class="order-summary">
+            <h2>Order Summary</h2>
+            <p><strong>Order ID:</strong> #<span th:text="${order.orderid}">OrderId</span></p>
+            <p><strong>Order Date:</strong> <span th:text="${#temporals.format(order.orderDate, 'dd MMM yyyy HH:mm')}">OrderDate</span></p>
+            <p><strong>Total Price:</strong> ₹<span th:text="${#numbers.formatDecimal(order.totalPrice, 1, 2)}">0.00</span></p>
+            <p><strong>Status:</strong> 
+                <span th:classappend="${order.status == 'completed'} ? 'status status-completed' : 'status status-pending'" 
+                      th:text="${order.status}">Pending</span>
+            </p>
+        </div>
+
+        <h2>Order Details</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item : ${order.orderItems}">
+                    <td th:text="${item.product.name}">Product Name</td>
+                    <td th:text="${item.quantity}">1</td>
+                    <td>₹<span th:text="${#numbers.formatDecimal(item.price, 1, 2)}">0.00</span></td>
+                    <td>₹<span th:text="${#numbers.formatDecimal(item.subtotal, 1, 2)}">0.00</span></td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="3" style="text-align: right;"><strong>Total:</strong></td>
+                    <td>₹<span th:text="${#numbers.formatDecimal(order.totalPrice, 1, 2)}">0.00</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="text-align: center;">
+            <a href="/" class="btn">Continue Shopping</a>
+        </div>
+    </div>
+</body>
+</html>

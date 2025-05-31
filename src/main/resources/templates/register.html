@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Register - Online Clothing Store</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #f8f8f8, #e6e6e6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .register-container {
+            background-color: white;
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        label {
+            font-weight: 500;
+            color: #444;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 6px 0 16px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .error {
+            color: #4361ee;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4361ee;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #4361ee;
+        }
+
+        .message {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .message.success {
+            color: green;
+        }
+
+        .message.error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<div class="register-container">
+    <h2>Create Your Account</h2>
+	<!-- Add this at the top of your form -->
+	<div th:if="${param.registered}" class="message success">
+	    Registration successful! Please login.
+	</div>
+    <form th:action="@{/register}" th:object="${user}" method="post">
+        <label>Username:</label>
+        <input type="text" th:field="*{username}" required />
+        <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="error"></div>
+
+        <label>Password:</label>
+        <input type="password" th:field="*{password}" required />
+        <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error"></div>
+
+        <label>Email:</label>
+        <input type="email" th:field="*{email}" required />
+        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error"></div>
+
+        <label>Mobile:</label>
+        <input type="text" th:field="*{mobile}" required />
+        <div th:if="${#fields.hasErrors('mobile')}" th:errors="*{mobile}" class="error"></div>
+
+        <label>Address:</label>
+        <textarea th:field="*{address}" required></textarea>
+        <div th:if="${#fields.hasErrors('address')}" th:errors="*{address}" class="error"></div>
+
+        <label>City:</label>
+        <input type="text" th:field="*{city}" />
+
+        <label>State:</label>
+        <input type="text" th:field="*{state}" />
+
+        <label>Pincode:</label>
+        <input type="text" th:field="*{pincode}" />
+
+        <button type="submit">Register</button>
+    </form>
+
+    <div th:if="${success}" class="message success" th:text="${success}"></div>
+    <div th:if="${error}" class="message error" th:text="${error}"></div>
+</div>
+</body>
+</html>
